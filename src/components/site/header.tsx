@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const pathname = usePathname();
 
   // Lock page scroll while the mobile drawer is open.
@@ -146,19 +147,35 @@ export function SiteHeader() {
               <nav className="flex-1 px-3 py-4">
                 {mainNav.map((item) => {
                   const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                  const expanded = item.children ? mobileExpanded === item.href || (mobileExpanded === null && active) : false;
                   return (
                     <div key={item.href} className="mb-1">
-                      <Link
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
+                      <div
                         className={cn(
-                          "block rounded-md px-3 py-2.5 text-base font-medium text-navy-950 hover:bg-navy-50",
+                          "flex items-center rounded-md text-base font-medium text-navy-950",
                           active && "bg-navy-50 font-semibold text-navy-900"
                         )}
                       >
-                        {item.label}
-                      </Link>
-                      {item.children && (
+                        <Link
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="block flex-1 px-3 py-2.5 hover:text-navy-900"
+                        >
+                          {item.label}
+                        </Link>
+                        {item.children && (
+                          <button
+                            type="button"
+                            onClick={() => setMobileExpanded(expanded ? "" : item.href)}
+                            className="flex h-10 w-10 shrink-0 items-center justify-center text-slate-500 hover:text-navy-900"
+                            aria-label={expanded ? `Réduire ${item.label}` : `Développer ${item.label}`}
+                            aria-expanded={expanded}
+                          >
+                            <ChevronDown className={cn("h-4 w-4 transition-transform", expanded && "rotate-180")} strokeWidth={2} />
+                          </button>
+                        )}
+                      </div>
+                      {item.children && expanded && (
                         <div className="ml-3 border-l border-slate-200 pl-3">
                           {item.children.map((child) => {
                             const childActive = pathname === child.href;
