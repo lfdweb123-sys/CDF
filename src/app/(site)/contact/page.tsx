@@ -2,23 +2,24 @@ import type { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
 import { ContactForm } from "@/components/site/contact-form";
-import { siteConfig } from "@/lib/data/site";
+import { getContact } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Contactez CDF pour parler à un consultant, demander un diagnostic ou obtenir plus d'informations.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const contact = await getContact();
   return (
     <>
       <PageHero eyebrow="Contact" title="Parler à un consultant CDF" description="Nous répondons généralement sous 24 heures ouvrées." />
       <section className="container-cdf grid gap-12 py-16 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-1">
-          <ContactItem icon={Phone} label="Téléphone" value={siteConfig.contact.phone} href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`} />
-          <ContactItem icon={MessageCircle} label="WhatsApp" value={siteConfig.contact.whatsapp} href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/[^\d]/g, "")}`} />
-          <ContactItem icon={Mail} label="Email" value={siteConfig.contact.email} href={`mailto:${siteConfig.contact.email}`} />
-          <ContactItem icon={MapPin} label="Adresse" value={siteConfig.contact.address} />
+          <ContactItem icon={Phone} label="Téléphone" value={contact.phone} href={`tel:${contact.phone.replace(/\s/g, "")}`} />
+          <ContactItem icon={MessageCircle} label="WhatsApp" value={contact.whatsapp} href={`https://wa.me/${contact.whatsapp.replace(/[^\d]/g, "")}`} />
+          <ContactItem icon={Mail} label="Email" value={contact.email} href={`mailto:${contact.email}`} />
+          <ContactItem icon={MapPin} label="Adresse" value={contact.address} />
         </div>
         <div className="lg:col-span-2">
           <ContactForm />

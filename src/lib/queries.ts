@@ -39,6 +39,46 @@ export async function listAllMissions(): Promise<Mission[]> {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Mission);
 }
 
+export async function listAllAnomalies(): Promise<Anomaly[]> {
+  const snap = await adminDb.collection("anomalies").orderBy("createdAt", "desc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Anomaly);
+}
+
+export async function listAllControls(): Promise<Control[]> {
+  const snap = await adminDb.collection("controls").orderBy("createdAt", "desc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Control);
+}
+
+export async function listAllRecommendations(): Promise<Recommendation[]> {
+  const snap = await adminDb.collection("recommendations").orderBy("createdAt", "desc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Recommendation);
+}
+
+export async function listAllReports(): Promise<Report[]> {
+  const snap = await adminDb.collection("reports").orderBy("publishedAt", "desc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Report);
+}
+
+export async function listAllDocuments(): Promise<CdfDocument[]> {
+  const snap = await adminDb.collection("documents").orderBy("uploadedAt", "desc").get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as CdfDocument);
+}
+
+export async function listStaffUsers(): Promise<import("@/types").AppUser[]> {
+  const snap = await adminDb.collection("users").where("companyId", "==", null).get();
+  return snap.docs.map((d) => ({ uid: d.id, ...d.data() }) as import("@/types").AppUser);
+}
+
+export async function listCompanyUsers(companyId: string): Promise<import("@/types").AppUser[]> {
+  const snap = await adminDb.collection("users").where("companyId", "==", companyId).get();
+  return snap.docs.map((d) => ({ uid: d.id, ...d.data() }) as import("@/types").AppUser);
+}
+
+export async function listAuditLogs(limit = 200): Promise<import("@/types").AuditLogEntry[]> {
+  const snap = await adminDb.collection("audit_logs").orderBy("createdAt", "desc").limit(limit).get();
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as import("@/types").AuditLogEntry);
+}
+
 export async function listNotifications(userId: string, companyId?: string | null): Promise<Notification[]> {
   const snap = await adminDb.collection("notifications").where("userId", "==", userId).get();
   const userNotifs = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Notification);

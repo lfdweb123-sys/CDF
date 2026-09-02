@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Mail, Phone, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 import { footerNav, siteConfig } from "@/lib/data/site";
+import { getContact } from "@/lib/content";
 
-export function SiteFooter() {
+export async function SiteFooter() {
   const year = new Date().getFullYear();
+  const contact = await getContact();
 
   return (
     <footer className="border-t border-slate-200 bg-navy-950 text-slate-300">
@@ -16,14 +18,14 @@ export function SiteFooter() {
             <ul className="mt-6 space-y-2.5 text-sm text-navy-200">
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0 text-navy-400" strokeWidth={1.75} />
-                <a href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`} className="hover:text-white">
-                  {siteConfig.contact.phone}
+                <a href={`tel:${contact.phone.replace(/\s/g, "")}`} className="hover:text-white">
+                  {contact.phone}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 shrink-0 text-navy-400" strokeWidth={1.75} />
                 <a
-                  href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/[^\d]/g, "")}`}
+                  href={`https://wa.me/${contact.whatsapp.replace(/[^\d]/g, "")}`}
                   className="hover:text-white"
                   target="_blank"
                   rel="noreferrer"
@@ -33,13 +35,13 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0 text-navy-400" strokeWidth={1.75} />
-                <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-white">
-                  {siteConfig.contact.email}
+                <a href={`mailto:${contact.email}`} className="hover:text-white">
+                  {contact.email}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 shrink-0 text-navy-400" strokeWidth={1.75} />
-                {siteConfig.contact.address}
+                {contact.address}
               </li>
             </ul>
           </div>
