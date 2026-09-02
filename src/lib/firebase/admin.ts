@@ -7,6 +7,14 @@ import { getFirestore, type Firestore } from "firebase-admin/firestore";
 // Credentials come exclusively from environment variables (Vercel project settings
 // in production, .env.local in development). The private key is never committed.
 //
+// NOTE — package.json pins `jose` to 4.15.9 via "overrides". firebase-admin's
+// transitive dependency jwks-rsa@4.x does a plain `require("jose")`, but jose
+// v5+ ships ESM-only (no "require" export condition), which crashes on Vercel
+// with ERR_REQUIRE_ESM the moment `firebase-admin/auth` is imported. jose
+// 4.15.9 is the last release with a working CJS build and the same
+// importJWK/exportSPKI API jwks-rsa relies on — do not remove the override or
+// bump firebase-admin without re-checking this.
+//
 // Initialization is lazy (first real use) rather than at module load, so that
 // `next build`'s route-collection step — which imports every route module
 // without running it — does not require these secrets to be present.
