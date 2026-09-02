@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #10172a;
+
+  /* CDF brand palette — bleu nuit / navy, blanc, gris, accent sobre */
+  --color-navy-950: #060b17;
+  --color-navy-900: #0b1526;
+  --color-navy-800: #10203a;
+  --color-navy-700: #16304f;
+  --color-navy-600: #1d3f66;
+  --color-navy-500: #27547f;
+  --color-navy-400: #4a7196;
+  --color-navy-300: #82a2bf;
+  --color-navy-200: #bcd0e2;
+  --color-navy-100: #dfe9f3;
+  --color-navy-50: #f4f8fb;
+
+  --color-slate-950: #0d1117;
+  --color-slate-900: #161b22;
+  --color-slate-800: #232a35;
+  --color-slate-700: #3a4453;
+  --color-slate-600: #545f70;
+  --color-slate-500: #71798a;
+  --color-slate-400: #98a1b0;
+  --color-slate-300: #c1c8d3;
+  --color-slate-200: #dee2e8;
+  --color-slate-100: #eef1f5;
+  --color-slate-50: #f8f9fb;
+
+  --color-accent-600: #b3801a;
+  --color-accent-500: #c99328;
+  --color-accent-400: #dcac4c;
+  --color-accent-100: #f7ecd4;
+
+  /* Risk levels */
+  --color-risk-low: #1f8a5f;
+  --color-risk-low-bg: #e7f5ee;
+  --color-risk-moderate: #b58a00;
+  --color-risk-moderate-bg: #faf3d9;
+  --color-risk-high: #c1651c;
+  --color-risk-high-bg: #fbe9dc;
+  --color-risk-critical: #b8332c;
+  --color-risk-critical-bg: #fbe4e2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-navy-950: var(--color-navy-950);
+  --color-navy-900: var(--color-navy-900);
+  --color-navy-800: var(--color-navy-800);
+  --color-navy-700: var(--color-navy-700);
+  --color-navy-600: var(--color-navy-600);
+  --color-navy-500: var(--color-navy-500);
+  --color-navy-400: var(--color-navy-400);
+  --color-navy-300: var(--color-navy-300);
+  --color-navy-200: var(--color-navy-200);
+  --color-navy-100: var(--color-navy-100);
+  --color-navy-50: var(--color-navy-50);
+
+  --color-slate-950: var(--color-slate-950);
+  --color-slate-900: var(--color-slate-900);
+  --color-slate-800: var(--color-slate-800);
+  --color-slate-700: var(--color-slate-700);
+  --color-slate-600: var(--color-slate-600);
+  --color-slate-500: var(--color-slate-500);
+  --color-slate-400: var(--color-slate-400);
+  --color-slate-300: var(--color-slate-300);
+  --color-slate-200: var(--color-slate-200);
+  --color-slate-100: var(--color-slate-100);
+  --color-slate-50: var(--color-slate-50);
+
+  --color-accent-600: var(--color-accent-600);
+  --color-accent-500: var(--color-accent-500);
+  --color-accent-400: var(--color-accent-400);
+  --color-accent-100: var(--color-accent-100);
+
+  --color-risk-low: var(--color-risk-low);
+  --color-risk-low-bg: var(--color-risk-low-bg);
+  --color-risk-moderate: var(--color-risk-moderate);
+  --color-risk-moderate-bg: var(--color-risk-moderate-bg);
+  --color-risk-high: var(--color-risk-high);
+  --color-risk-high-bg: var(--color-risk-high-bg);
+  --color-risk-critical: var(--color-risk-critical);
+  --color-risk-critical-bg: var(--color-risk-critical-bg);
+}
+
+/* CDF platform: light theme only, by design — never rendered on a dark background. */
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--color-navy-200);
+  color: var(--color-navy-950);
+}
+
+.container-cdf {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .container-cdf {
+    padding-inline: 2rem;
+  }
+}
