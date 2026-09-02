@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Upload, Loader2 } from "lucide-react";
-import { storage } from "@/lib/firebase/client";
 import { Select } from "@/components/ui/form";
+import { readFileAsBase64, MAX_INLINE_FILE_BYTES, humanFileSize } from "@/lib/file-upload";
 import type { DocumentCategory } from "@/types";
 
 const CATEGORY_LABEL: Record<DocumentCategory, string> = {
@@ -18,9 +17,7 @@ const CATEGORY_LABEL: Record<DocumentCategory, string> = {
   controle: "Documents de contrôle",
 };
 
-const MAX_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB
-
-export function DocumentUpload({ companyId }: { companyId: string }) {
+export function DocumentUpload() {
   const router = useRouter();
   const [category, setCategory] = useState<DocumentCategory>("justificatifs");
   const [uploading, setUploading] = useState(false);
@@ -31,28 +28,23 @@ export function DocumentUpload({ companyId }: { companyId: string }) {
     e.target.value = "";
     if (!file) return;
 
-    if (file.size > MAX_SIZE_BYTES) {
-      setError("Fichier trop volumineux (20 Mo maximum).");
-      return;
-    }
-
     setError(null);
     setUploading(true);
     try {
-      const path = `companies/${companyId}/documents/${category}/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const fileUrl = await getDownloadURL(storageRef);
+      const { name, mimeType, data } = await readFileAsBase64(file);
 
       const res = await fetch("/api/portail/documents", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name: file.name, fileUrl, category }),
+        body: JSON.stringify({ name, mimeType, data, category }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Échec du téléversement.");
+      }
       router.refresh();
-    } catch {
-      setError("Le téléversement a échoué. Merci de réessayer.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Le téléversement a échoué. Merci de réessayer.");
     } finally {
       setUploading(false);
     }
@@ -70,6 +62,7 @@ export function DocumentUpload({ companyId }: { companyId: string }) {
         {uploading ? "Envoi en cours..." : "Téléverser un document"}
         <input type="file" className="hidden" onChange={onFileChange} disabled={uploading} />
       </label>
+      <span className="text-xs text-slate-400">{humanFileSize(MAX_INLINE_FILE_BYTES)} maximum</span>
       {error && <p className="text-xs font-medium text-risk-critical">{error}</p>}
     </div>
   );

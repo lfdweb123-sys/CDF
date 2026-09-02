@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Upload, Loader2 } from "lucide-react";
-import { storage } from "@/lib/firebase/client";
 import { Field, Input, Select } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { readFileAsBase64, MAX_INLINE_FILE_BYTES, humanFileSize } from "@/lib/file-upload";
 import type { Company, ReportType } from "@/types";
 
 const TYPE_OPTIONS: { value: ReportType; label: string }[] = [
@@ -28,6 +27,17 @@ export function AdminReportUpload({ companies, defaultCompanyId }: { companies: 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selected = e.target.files?.[0] ?? null;
+    if (selected && selected.size > MAX_INLINE_FILE_BYTES) {
+      setError(`Fichier trop volumineux (${humanFileSize(MAX_INLINE_FILE_BYTES)} maximum — compressez le PDF ou réduisez sa résolution).`);
+      setFile(null);
+      return;
+    }
+    setError(null);
+    setFile(selected);
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file || !companyId || !title) {
@@ -37,22 +47,22 @@ export function AdminReportUpload({ companies, defaultCompanyId }: { companies: 
     setError(null);
     setLoading(true);
     try {
-      const path = `companies/${companyId}/reports/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const fileUrl = await getDownloadURL(storageRef);
+      const { mimeType, data } = await readFileAsBase64(file);
 
       const res = await fetch("/api/admin/rapports", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ companyId, title, type, fileUrl, confidential }),
+        body: JSON.stringify({ companyId, title, type, mimeType, data, confidential }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "La publication a échoué.");
+      }
       setTitle("");
       setFile(null);
       router.refresh();
-    } catch {
-      setError("La publication a échoué. Merci de réessayer.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "La publication a échoué. Merci de réessayer.");
     } finally {
       setLoading(false);
     }
@@ -87,8 +97,9 @@ export function AdminReportUpload({ companies, defaultCompanyId }: { companies: 
       <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-slate-300 px-4 py-2.5 text-sm text-navy-900 hover:border-navy-400">
         <Upload className="h-4 w-4" strokeWidth={1.75} />
         {file ? file.name : "Sélectionner le fichier (PDF)"}
-        <input type="file" accept="application/pdf" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <input type="file" accept="application/pdf" className="hidden" onChange={onFileChange} />
       </label>
+      <p className="text-xs text-slate-400">{humanFileSize(MAX_INLINE_FILE_BYTES)} maximum — stockage Firestore uniquement.</p>
       {error && <p className="text-xs font-medium text-risk-critical">{error}</p>}
       <Button type="submit" size="sm" disabled={loading}>
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Publier le rapport"}

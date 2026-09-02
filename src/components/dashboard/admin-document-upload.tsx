@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Upload, Loader2 } from "lucide-react";
-import { storage } from "@/lib/firebase/client";
 import { Select } from "@/components/ui/form";
+import { readFileAsBase64, MAX_INLINE_FILE_BYTES, humanFileSize } from "@/lib/file-upload";
 import type { Company, DocumentCategory } from "@/types";
 
 const CATEGORY_LABEL: Record<DocumentCategory, string> = {
@@ -37,20 +36,20 @@ export function AdminDocumentUpload({ companies }: { companies: Company[] }) {
     setError(null);
     setUploading(true);
     try {
-      const path = `companies/${companyId}/documents/${category}/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const fileUrl = await getDownloadURL(storageRef);
+      const { name, mimeType, data } = await readFileAsBase64(file);
 
       const res = await fetch("/api/admin/documents", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ companyId, name: file.name, fileUrl, category }),
+        body: JSON.stringify({ companyId, name, mimeType, data, category }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Le téléversement a échoué.");
+      }
       router.refresh();
-    } catch {
-      setError("Le téléversement a échoué.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Le téléversement a échoué.");
     } finally {
       setUploading(false);
     }
@@ -74,6 +73,7 @@ export function AdminDocumentUpload({ companies }: { companies: Company[] }) {
         {uploading ? "Envoi..." : "Téléverser"}
         <input type="file" className="hidden" onChange={onFileChange} disabled={uploading} />
       </label>
+      <span className="text-xs text-slate-400">{humanFileSize(MAX_INLINE_FILE_BYTES)} maximum</span>
       {error && <p className="text-xs font-medium text-risk-critical">{error}</p>}
     </div>
   );

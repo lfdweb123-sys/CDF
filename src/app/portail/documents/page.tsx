@@ -33,7 +33,7 @@ export default async function DocumentsPage() {
         <p className="mt-1 text-sm text-slate-500">Documents partagés entre votre entreprise et CDF, classés par catégorie.</p>
       </div>
 
-      {canWriteClientData(session!.role) && <DocumentUpload companyId={session!.companyId!} />}
+      {canWriteClientData(session!.role) && <DocumentUpload />}
 
       {sorted.length === 0 ? (
         <EmptyState title="Aucun document" description="Les documents de vos missions et les pièces que vous téléversez apparaîtront ici." />

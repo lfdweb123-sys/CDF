@@ -14,8 +14,14 @@ rules_version = '2';
 // These rules exist as a second, independent layer of defense: if a browser
 // ever talks to Firestore directly with the CLIENT SDK and a user's ID token
 // (which this app currently does not do — the client SDK is only used here
-// for Firebase Auth and Storage uploads), the same tenant isolation and role
-// checks still apply. Default posture is deny-by-default.
+// for Firebase Auth), the same tenant isolation and role checks still apply.
+// Default posture is deny-by-default.
+//
+// Firebase Storage is not used anywhere in this app — uploaded files (see
+// `documents` and `reports` below) are read as base64 client-side and stored
+// inline in the Firestore document itself as a `fileUrl` data: URI, capped at
+// well under Firestore's 1 MiB document limit (src/lib/file-upload.ts). This
+// keeps the whole platform on a single Firebase product.
 // -----------------------------------------------------------------------------
 
 function isSignedIn() {

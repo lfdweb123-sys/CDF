@@ -11,7 +11,9 @@ missions, anomalies, recommandations, rapports et documents.
 - **Frontend / Backend** : Next.js 16 (App Router, React Server Components, Server Actions), TypeScript, Tailwind CSS v4
 - **Base de données** : Firestore (multi-tenant, isolation stricte par `companyId`)
 - **Authentification** : Firebase Authentication (email/mot de passe) + cookie de session httpOnly vérifié côté serveur (Firebase Admin SDK)
-- **Stockage** : Firebase Storage (documents, rapports)
+- **Stockage** : Firestore uniquement (aucun Firebase Storage) — les fichiers
+  (documents, rapports) sont lus en base64 côté client et stockés en ligne
+  dans le document Firestore lui-même, plafonnés à 700 Ko
 - **Email transactionnel** : Brevo (API HTTP)
 - **Icônes** : lucide-react (aucun émoji dans l'interface)
 - **Déploiement cible** : Vercel
@@ -42,7 +44,7 @@ src/
   types/           Types de domaine partagés
 scripts/
   seed-demo.ts     Jeu de données de démonstration ("Restaurant Horizon")
-firestore.rules, storage.rules, firebase.json
+firestore.rules, firebase.json
 ```
 
 ### Multi-tenant & sécurité
@@ -58,9 +60,14 @@ firestore.rules, storage.rules, firebase.json
   `CONTROLEUR_TERRAIN`, `CLIENT_ADMIN`, `CLIENT_MANAGER`, `CLIENT_VIEWER`)
   sont stockés en Custom Claims Firebase (source de vérité pour les
   autorisations) et mirorés dans Firestore (`users/{uid}`) pour l'affichage.
-- `firestore.rules` et `storage.rules` appliquent une isolation par tenant en
-  seconde ligne de défense (voir les commentaires dans ces fichiers pour le
-  détail du modèle de menace).
+- `firestore.rules` applique une isolation par tenant en seconde ligne de
+  défense (voir les commentaires dans ce fichier pour le détail du modèle de
+  menace). Il n'y a pas de `storage.rules` : la plateforme n'utilise pas
+  Firebase Storage — les fichiers téléversés (documents, rapports) sont
+  stockés directement dans Firestore en base64 (`fileUrl`, une data URI),
+  plafonnés à 700 Ko par fichier pour rester sous la limite de 1 Mo par
+  document Firestore (`src/lib/file-upload.ts`). Au-delà, compressez le
+  fichier avant de le téléverser.
 - Le journal d'audit (`audit_logs`) est en écriture seule via le SDK Admin —
   aucune interface, y compris administrateur, ne permet de le modifier ou de
   le supprimer.
@@ -103,7 +110,7 @@ Variables** sur Vercel pour la production.
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase deploy --only firestore:rules,storage:rules --project <votre-project-id>
+firebase deploy --only firestore:rules --project <votre-project-id>
 ```
 
 ## Données de démonstration

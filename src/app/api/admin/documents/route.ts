@@ -4,11 +4,13 @@ import { getSessionUser } from "@/lib/auth/session";
 import { canManageMissions } from "@/lib/auth/roles";
 import { adminDb } from "@/lib/firebase/admin";
 import { logAudit } from "@/lib/audit";
+import { MAX_INLINE_FILE_BYTES, base64ByteSize, buildDataUri, humanFileSize } from "@/lib/file-upload";
 
 const schema = z.object({
   companyId: z.string().min(1),
   name: z.string().min(1).max(300),
-  fileUrl: z.string().url(),
+  mimeType: z.string().min(1).max(200),
+  data: z.string().min(1),
   category: z.enum(["rapports", "contrats", "procedures", "justificatifs", "photos", "factures", "controle"]),
 });
 
@@ -21,8 +23,8 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Document invalide." }, { status: 400 });
 
-  if (!parsed.data.fileUrl.includes(encodeURIComponent(`companies/${parsed.data.companyId}/documents`))) {
-    return NextResponse.json({ error: "Chemin de fichier invalide." }, { status: 403 });
+  if (base64ByteSize(parsed.data.data) > MAX_INLINE_FILE_BYTES) {
+    return NextResponse.json({ error: `Fichier trop volumineux (${humanFileSize(MAX_INLINE_FILE_BYTES)} maximum).` }, { status: 413 });
   }
 
   const userSnap = await adminDb.collection("users").doc(session.uid).get();
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
     companyId: parsed.data.companyId,
     category: parsed.data.category,
     name: parsed.data.name,
-    fileUrl: parsed.data.fileUrl,
+    fileUrl: buildDataUri(parsed.data.data, parsed.data.mimeType),
     version: 1,
     author,
     uploadedAt: new Date().toISOString(),
