@@ -1,7 +1,13 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import type { RiskLevel } from "@/types";
 
-export function cn(...classes: (string | false | null | undefined)[]): string {
-  return classes.filter(Boolean).join(" ");
+// twMerge resolves conflicting Tailwind utilities (e.g. a component's default
+// `bg-white` vs. a caller's `className="bg-transparent"`) by keeping the last
+// one for a given CSS property group, regardless of Tailwind's generated CSS
+// order — a plain string join cannot guarantee that a later class wins.
+export function cn(...classes: ClassValue[]): string {
+  return twMerge(clsx(classes));
 }
 
 export function formatDate(iso: string): string {

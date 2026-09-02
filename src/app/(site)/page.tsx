@@ -12,13 +12,15 @@ import {
   FileCheck,
   CheckCircle2,
   TrendingDown,
-  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/card";
+import { HeroGraphic } from "@/components/site/hero-graphic";
+import { WhatsAppButton } from "@/components/site/whatsapp-button";
 import { services } from "@/lib/data/services";
 import { lossAreas } from "@/lib/data/pricing";
 import { siteConfig } from "@/lib/data/site";
+import { getContact } from "@/lib/content";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -34,13 +36,16 @@ const organizationJsonLd = {
 const domainIcons = [Wallet, Package, ShoppingCart, Users, FolderKanban, Truck, Fuel, Smartphone, FileCheck];
 const domainLabels = ["Caisse", "Stocks", "Achats", "Personnel", "Projets", "Logistique", "Carburant", "Encaissements", "Procédures"];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const contact = await getContact();
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
+      <WhatsAppButton phone={contact.whatsapp} />
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy-950">
         <div
@@ -53,28 +58,30 @@ export default function HomePage() {
           aria-hidden
         />
         <div className="container-cdf relative py-20 lg:py-28">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-navy-700 bg-navy-900/60 px-3 py-1 text-xs font-medium text-navy-200">
-              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.75} />
-              Contrôle opérationnel &amp; prévention des pertes
-            </span>
-            <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Vous ne pouvez pas être partout.
-              <br />
-              Nous vérifions pour vous.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-200">
-              CDF aide les dirigeants à identifier les failles de leurs opérations, réduire leurs pertes
-              et sécuriser leurs processus.
-            </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button href="/diagnostic-en-ligne" size="lg">
-                Demander un diagnostic
-                <ArrowRight className="h-4 w-4" strokeWidth={2} />
-              </Button>
-              <Button href="/services" variant="outline" size="lg" className="border-navy-600 bg-transparent text-white hover:bg-navy-900">
-                Découvrir nos solutions
-              </Button>
+          <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="max-w-3xl">
+              <h1 className="text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Vous ne pouvez pas être partout.
+                <br />
+                Nous vérifions pour vous.
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-200">
+                CDF aide les dirigeants à identifier les failles de leurs opérations, réduire leurs pertes
+                et sécuriser leurs processus.
+              </p>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Button href="/diagnostic-en-ligne" size="lg">
+                  Demander un diagnostic
+                  <ArrowRight className="h-4 w-4" strokeWidth={2} />
+                </Button>
+                <Button href="/services" variant="outline" size="lg" className="border-navy-600 bg-transparent text-white hover:bg-navy-900">
+                  Découvrir nos solutions
+                </Button>
+              </div>
+            </div>
+
+            <div className="hidden lg:block">
+              <HeroGraphic />
             </div>
           </div>
 

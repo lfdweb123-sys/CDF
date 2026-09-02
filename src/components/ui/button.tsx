@@ -5,12 +5,14 @@ import { cn } from "@/lib/utils";
 type Variant = "primary" | "secondary" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
 
+// Every variant with a white/light background pairs it with slate-950 (near-
+// black) text — never a light or white text color on a white/light button.
 const variantClasses: Record<Variant, string> = {
   primary: "bg-navy-900 text-white hover:bg-navy-800 focus-visible:outline-navy-900",
   secondary: "bg-accent-500 text-navy-950 hover:bg-accent-600 focus-visible:outline-accent-600",
   outline:
-    "border border-slate-300 bg-white text-navy-900 hover:border-navy-400 hover:bg-navy-50 focus-visible:outline-navy-900",
-  ghost: "text-navy-900 hover:bg-navy-50 focus-visible:outline-navy-900",
+    "border border-slate-300 bg-white text-slate-950 hover:border-navy-400 hover:bg-navy-50 focus-visible:outline-navy-900",
+  ghost: "text-slate-950 hover:bg-navy-50 focus-visible:outline-navy-900",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -19,8 +21,11 @@ const sizeClasses: Record<Size, string> = {
   lg: "text-base px-6 py-3.5 gap-2",
 };
 
+// Full width and centered on narrow screens (mobile), auto width from `sm:`
+// up — a caller can still override with its own `w-*` class in `className`
+// since `cn()` resolves the conflict deterministically (see lib/utils.ts).
 const base =
-  "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex w-full sm:w-auto items-center justify-center rounded-md font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
 interface CommonProps {
   variant?: Variant;

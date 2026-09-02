@@ -11,8 +11,8 @@ export async function SiteFooter() {
   return (
     <footer className="border-t border-slate-200 bg-navy-950 text-slate-300">
       <div className="container-cdf py-14">
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-5">
-          <div className="col-span-2 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="sm:col-span-3 lg:col-span-2">
             <Logo dark />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-navy-200">{siteConfig.tagline}</p>
             <ul className="mt-6 space-y-2.5 text-sm text-navy-200">

@@ -86,7 +86,7 @@ export default async function AdminRecommendationsPage({
                   <div className="h-full rounded-full bg-navy-700" style={{ width: `${r.progress}%` }} />
                 </div>
                 <Input name="progress" type="number" min={0} max={100} defaultValue={r.progress} className="w-20" />
-                <Button type="submit" size="sm" variant="outline">Mettre à jour</Button>
+                <Button type="submit" size="sm" variant="outline" className="w-auto shrink-0">Mettre à jour</Button>
               </form>
             </Card>
           ))}

@@ -37,7 +37,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
             <option value="suspendu">Suspendu</option>
             <option value="prospect">Prospect</option>
           </Select>
-          <Button type="submit" size="sm" variant="outline">Mettre à jour</Button>
+          <Button type="submit" size="sm" variant="outline" className="w-auto shrink-0">Mettre à jour</Button>
         </form>
       </div>
 
@@ -53,7 +53,7 @@ export default async function AdminClientDetailPage({ params }: { params: Promis
           <form action={updateCompanyRiskScore} className="mt-4 flex items-center gap-2">
             <input type="hidden" name="companyId" value={company.id} />
             <Input name="score" type="number" min={0} max={100} placeholder="Nouveau score" className="w-32" required />
-            <Button type="submit" size="sm" variant="outline">Enregistrer</Button>
+            <Button type="submit" size="sm" variant="outline" className="w-auto shrink-0">Enregistrer</Button>
           </form>
           <p className="mt-2 text-xs text-slate-500">Ajoute une entrée à l&apos;historique affiché sur le dashboard client.</p>
         </Card>

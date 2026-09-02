@@ -106,15 +106,30 @@ body {
   color: var(--color-navy-950);
 }
 
+@keyframes cdf-hero-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .container-cdf {
   width: 100%;
-  max-width: 80rem;
+  max-width: 96rem;
   margin-inline: auto;
   padding-inline: 1.25rem;
 }
 
 @media (min-width: 1024px) {
   .container-cdf {
-    padding-inline: 2rem;
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-cdf {
+    padding-inline: 4rem;
   }
 }

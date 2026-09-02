@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, X, ArrowRight } from "lucide-react";
+import { ChevronDown, Menu, ArrowLeft, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { mainNav } from "@/lib/data/site";
@@ -13,6 +14,24 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
+
+  // Lock page scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [mobileOpen]);
+
+  // Close the drawer automatically if the viewport grows past the mobile breakpoint.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => setMobileOpen(false);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -88,64 +107,75 @@ export function SiteHeader() {
           className="inline-flex items-center justify-center rounded-md p-2 text-navy-900 lg:hidden"
           onClick={() => setMobileOpen(true)}
           aria-label="Ouvrir le menu"
+          aria-expanded={mobileOpen}
         >
           <Menu className="h-6 w-6" strokeWidth={1.75} />
         </button>
       </div>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
-          <div className="absolute inset-0 bg-navy-950/40" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col overflow-y-auto bg-white shadow-xl">
-            <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
-              <Logo />
-              <button
-                type="button"
-                className="rounded-md p-2 text-navy-900"
-                onClick={() => setMobileOpen(false)}
-                aria-label="Fermer le menu"
-              >
-                <X className="h-6 w-6" strokeWidth={1.75} />
-              </button>
+      {/*
+        Rendered via a portal into <body>: this drawer uses `position: fixed`
+        to cover the viewport, but the header above sets `backdrop-blur`
+        (backdrop-filter), which — per spec — creates a CSS containing block
+        for fixed-position descendants. Left as a child of <header>, the
+        drawer would be confined to the header's own 64px-tall box instead of
+        the full screen. Portaling to <body> sidesteps that entirely.
+      */}
+      {mobileOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[60] lg:hidden">
+            <div className="absolute inset-0 bg-navy-950/40" onClick={() => setMobileOpen(false)} />
+            <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col overflow-y-auto bg-white shadow-xl">
+              <div className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 px-4">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-md p-2 text-navy-900 hover:bg-navy-50"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Retour"
+                >
+                  <ArrowLeft className="h-5 w-5" strokeWidth={1.75} />
+                  <span className="text-sm font-medium">Retour</span>
+                </button>
+              </div>
+              <nav className="flex-1 px-3 py-4">
+                {mainNav.map((item) => (
+                  <div key={item.href} className="mb-1">
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-md px-3 py-2.5 text-base font-medium text-navy-950 hover:bg-navy-50"
+                    >
+                      {item.label}
+                    </Link>
+                    {item.children && (
+                      <div className="ml-3 border-l border-slate-200 pl-3">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setMobileOpen(false)}
+                            className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-navy-50 hover:text-navy-900"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+              <div className="space-y-3 border-t border-slate-200 p-5">
+                <Button href="/diagnostic-en-ligne" onClick={() => setMobileOpen(false)}>
+                  Demander un diagnostic
+                </Button>
+                <Button href="/connexion" variant="outline" onClick={() => setMobileOpen(false)}>
+                  Espace client
+                </Button>
+              </div>
             </div>
-            <nav className="flex-1 px-3 py-4">
-              {mainNav.map((item) => (
-                <div key={item.href} className="mb-1">
-                  <Link
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="block rounded-md px-3 py-2.5 text-base font-medium text-navy-950 hover:bg-navy-50"
-                  >
-                    {item.label}
-                  </Link>
-                  {item.children && (
-                    <div className="ml-3 border-l border-slate-200 pl-3">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-navy-50 hover:text-navy-900"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </nav>
-            <div className="space-y-3 border-t border-slate-200 p-5">
-              <Button href="/diagnostic-en-ligne" className="w-full" onClick={() => setMobileOpen(false)}>
-                Demander un diagnostic
-              </Button>
-              <Button href="/connexion" variant="outline" className="w-full" onClick={() => setMobileOpen(false)}>
-                Espace client
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </header>
   );
 }
