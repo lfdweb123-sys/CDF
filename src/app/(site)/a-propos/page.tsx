@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ClipboardCheck, Radar, ShieldCheck, Eye, Target, Users } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
-import { NetworkNodesIllustration } from "@/components/site/illustrations";
+import { NetworkNodesIllustration, IllustrationPanel, LayersIllustration } from "@/components/site/illustrations";
 import { SectionHeading } from "@/components/ui/card";
 
 export const metadata: Metadata = {
@@ -29,20 +29,25 @@ export default function AboutPage() {
       />
 
       <section className="container-cdf py-16">
-        <div className="max-w-3xl">
-          <SectionHeading title="Notre positionnement" />
-          <p className="mt-5 text-sm leading-relaxed text-slate-700">
-            CDF est un cabinet spécialisé dans le contrôle opérationnel, la prévention des pertes, la
-            gestion des risques, la sécurisation des processus, l&apos;investigation d&apos;anomalies et la
-            supervision. Notre travail porte sur les systèmes et les processus de l&apos;entreprise — pas sur
-            la surveillance individuelle des collaborateurs.
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-slate-700">
-            CDF ne se présente pas comme un service capable de « détecter tous les voleurs ». Notre rôle
-            est d&apos;aider les dirigeants à voir clairement où se situent leurs vulnérabilités
-            opérationnelles, puis à mettre en place les mécanismes de contrôle qui réduisent durablement le
-            risque de pertes.
-          </p>
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="max-w-xl">
+            <SectionHeading title="Notre positionnement" />
+            <p className="mt-5 text-sm leading-relaxed text-slate-700">
+              CDF est un cabinet spécialisé dans le contrôle opérationnel, la prévention des pertes, la
+              gestion des risques, la sécurisation des processus, l&apos;investigation d&apos;anomalies et la
+              supervision. Notre travail porte sur les systèmes et les processus de l&apos;entreprise — pas sur
+              la surveillance individuelle des collaborateurs.
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-700">
+              CDF ne se présente pas comme un service capable de « détecter tous les voleurs ». Notre rôle
+              est d&apos;aider les dirigeants à voir clairement où se situent leurs vulnérabilités
+              opérationnelles, puis à mettre en place les mécanismes de contrôle qui réduisent durablement le
+              risque de pertes.
+            </p>
+          </div>
+          <IllustrationPanel>
+            <LayersIllustration size={300} />
+          </IllustrationPanel>
         </div>
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

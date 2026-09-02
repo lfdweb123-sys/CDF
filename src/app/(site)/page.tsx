@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/card";
-import { RadarRingsIllustration } from "@/components/site/illustrations";
+import { RadarRingsIllustration, IllustrationPanel, NetworkNodesIllustration } from "@/components/site/illustrations";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
 import { services } from "@/lib/data/services";
 import { lossAreas } from "@/lib/data/pricing";
@@ -148,6 +148,34 @@ export default async function HomePage() {
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NOTRE MÉTHODE */}
+      <section className="container-cdf py-20">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+          <IllustrationPanel className="order-last lg:order-first">
+            <NetworkNodesIllustration size={300} />
+          </IllustrationPanel>
+          <div>
+            <SectionHeading
+              eyebrow="Notre méthode"
+              title="Une supervision qui couvre tous vos sites, sans multiplier les outils"
+              description="Qu'il s'agisse d'un point de vente unique ou d'un réseau multi-sites, CDF centralise le diagnostic, les contrôles et le suivi dans un seul dispositif — pour vous, comme pour vos équipes sur le terrain."
+            />
+            <ul className="mt-6 space-y-3">
+              {[
+                "Un point d'entrée unique pour tous vos sites et domaines à risque",
+                "Des consultants et contrôleurs formés à vos processus",
+                "Un dashboard consolidé, quel que soit le nombre d'entités suivies",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-slate-700">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-risk-low" strokeWidth={1.75} />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>

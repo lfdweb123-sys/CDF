@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, AlertTriangle, ClipboardList, LineChart, PackageCheck } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
-import { LayersIllustration } from "@/components/site/illustrations";
+import { LayersIllustration, IllustrationPanel, RadarRingsIllustration } from "@/components/site/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { solutions, getSolutionBySlug } from "@/lib/data/solutions";
@@ -95,6 +95,10 @@ export default async function SolutionDetailPage({ params }: { params: Promise<{
         </div>
 
         <aside className="space-y-6">
+          <IllustrationPanel className="hidden p-6 sm:flex">
+            <RadarRingsIllustration icon={PackageCheck} size={180} />
+          </IllustrationPanel>
+
           <div className="rounded-xl border border-slate-200 bg-navy-50 p-6">
             <h3 className="text-sm font-semibold text-navy-950">Livrables</h3>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">

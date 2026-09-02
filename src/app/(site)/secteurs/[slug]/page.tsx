@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, AlertTriangle, Wrench, Target } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
-import { NetworkNodesIllustration } from "@/components/site/illustrations";
+import { NetworkNodesIllustration, IllustrationPanel, RadarRingsIllustration } from "@/components/site/illustrations";
 import { Button } from "@/components/ui/button";
 import { sectors, getSectorBySlug } from "@/lib/data/sectors";
 import { solutions } from "@/lib/data/solutions";
@@ -83,7 +83,11 @@ export default async function SectorDetailPage({ params }: { params: Promise<{ s
           </div>
         </div>
 
-        <aside>
+        <aside className="space-y-6">
+          <IllustrationPanel className="hidden p-6 sm:flex">
+            <RadarRingsIllustration icon={Target} size={180} />
+          </IllustrationPanel>
+
           <div className="rounded-xl border border-navy-800 bg-navy-950 p-6">
             <p className="text-sm font-semibold text-white">Votre secteur, votre priorité</p>
             <p className="mt-2 text-xs leading-relaxed text-navy-200">

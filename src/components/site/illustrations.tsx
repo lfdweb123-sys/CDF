@@ -1,10 +1,46 @@
 import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-// Shared visual language for the site's decorative page-hero graphics:
-// abstract "continuous supervision" motifs (scan rings, connected nodes) on
-// the navy hero background, built entirely in code — no external images.
-// Deliberately not literal (no magnifying glass / detective clichés), per
-// the brand brief.
+// Shared visual language for the site's decorative graphics: abstract
+// "continuous supervision" motifs (scan rings, connected nodes, layered
+// panels) built entirely in code — no external images. Deliberately not
+// literal (no magnifying glass / detective clichés), per the brand brief.
+//
+// The illustrations themselves are drawn for a navy backdrop (that's the
+// PageHero's background). To reuse the exact same components inside a
+// white page section further down, wrap them in IllustrationPanel, which
+// supplies that navy backdrop locally as a rounded card.
+
+/** Dark rounded card that hosts an illustration inside an otherwise white
+ * page section — keeps the artwork's contrast without a separate light
+ * palette for every motif. */
+export function IllustrationPanel({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex items-center justify-center overflow-hidden rounded-2xl bg-navy-950 p-10",
+        className
+      )}
+      aria-hidden
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }}
+      />
+      <div className="relative">{children}</div>
+    </div>
+  );
+}
 
 const DOT_POSITIONS = [
   { top: "6%", left: "48%", tone: "bg-risk-low" },

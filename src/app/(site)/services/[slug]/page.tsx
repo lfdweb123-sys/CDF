@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle2, Users } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
-import { RadarRingsIllustration } from "@/components/site/illustrations";
+import { RadarRingsIllustration, IllustrationPanel } from "@/components/site/illustrations";
 import { Button } from "@/components/ui/button";
 import { services, getServiceBySlug } from "@/lib/data/services";
 
@@ -67,6 +67,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         </div>
 
         <aside className="space-y-6">
+          <IllustrationPanel className="hidden p-6 sm:flex">
+            <RadarRingsIllustration icon={service.icon} size={180} />
+          </IllustrationPanel>
+
           <div className="rounded-xl border border-slate-200 bg-navy-50 p-6">
             <h3 className="flex items-center gap-2 text-sm font-semibold text-navy-950">
               <Users className="h-4 w-4" strokeWidth={1.75} />
