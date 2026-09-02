@@ -100,9 +100,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/diagnostic-en-ligne" className="text-sm font-medium text-slate-700 hover:text-navy-900">
-            Demander un diagnostic
-          </Link>
           <Button href="/connexion" size="md">
             Espace client
             <ArrowRight className="h-4 w-4" strokeWidth={2} />
@@ -202,9 +199,6 @@ export function SiteHeader() {
               <div className="space-y-3 border-t border-slate-200 p-5">
                 <Button href="/connexion" onClick={() => setMobileOpen(false)}>
                   Espace client
-                </Button>
-                <Button href="/diagnostic-en-ligne" variant="outline" onClick={() => setMobileOpen(false)}>
-                  Demander un diagnostic
                 </Button>
               </div>
             </div>
