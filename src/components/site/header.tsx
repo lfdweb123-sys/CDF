@@ -53,7 +53,7 @@ export function SiteHeader() {
                     href={item.href}
                     className={cn(
                       "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-navy-50 hover:text-navy-900",
-                      active && "text-navy-900"
+                      active && "bg-navy-50 font-semibold text-navy-900"
                     )}
                   >
                     {item.label}
@@ -62,15 +62,21 @@ export function SiteHeader() {
                   {openDropdown === item.href && (
                     <div className="absolute left-0 top-full w-64 pt-2">
                       <div className="rounded-lg border border-slate-200 bg-white p-2 shadow-lg shadow-slate-900/5">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-navy-50 hover:text-navy-900"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
+                        {item.children.map((child) => {
+                          const childActive = pathname === child.href;
+                          return (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={cn(
+                                "block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-navy-50 hover:text-navy-900",
+                                childActive && "bg-navy-50 font-semibold text-navy-900"
+                              )}
+                            >
+                              {child.label}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -83,7 +89,7 @@ export function SiteHeader() {
                 href={item.href}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-navy-50 hover:text-navy-900",
-                  active && "text-navy-900"
+                  active && "bg-navy-50 font-semibold text-navy-900"
                 )}
               >
                 {item.label}
@@ -93,11 +99,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/connexion" className="text-sm font-medium text-slate-700 hover:text-navy-900">
-            Espace client
-          </Link>
-          <Button href="/diagnostic-en-ligne" size="md">
+          <Link href="/diagnostic-en-ligne" className="text-sm font-medium text-slate-700 hover:text-navy-900">
             Demander un diagnostic
+          </Link>
+          <Button href="/connexion" size="md">
+            Espace client
             <ArrowRight className="h-4 w-4" strokeWidth={2} />
           </Button>
         </div>
@@ -138,38 +144,50 @@ export function SiteHeader() {
                 </button>
               </div>
               <nav className="flex-1 px-3 py-4">
-                {mainNav.map((item) => (
-                  <div key={item.href} className="mb-1">
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="block rounded-md px-3 py-2.5 text-base font-medium text-navy-950 hover:bg-navy-50"
-                    >
-                      {item.label}
-                    </Link>
-                    {item.children && (
-                      <div className="ml-3 border-l border-slate-200 pl-3">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-navy-50 hover:text-navy-900"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                {mainNav.map((item) => {
+                  const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                  return (
+                    <div key={item.href} className="mb-1">
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "block rounded-md px-3 py-2.5 text-base font-medium text-navy-950 hover:bg-navy-50",
+                          active && "bg-navy-50 font-semibold text-navy-900"
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                      {item.children && (
+                        <div className="ml-3 border-l border-slate-200 pl-3">
+                          {item.children.map((child) => {
+                            const childActive = pathname === child.href;
+                            return (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                onClick={() => setMobileOpen(false)}
+                                className={cn(
+                                  "block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-navy-50 hover:text-navy-900",
+                                  childActive && "bg-navy-50 font-semibold text-navy-900"
+                                )}
+                              >
+                                {child.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </nav>
               <div className="space-y-3 border-t border-slate-200 p-5">
-                <Button href="/diagnostic-en-ligne" onClick={() => setMobileOpen(false)}>
-                  Demander un diagnostic
-                </Button>
-                <Button href="/connexion" variant="outline" onClick={() => setMobileOpen(false)}>
+                <Button href="/connexion" onClick={() => setMobileOpen(false)}>
                   Espace client
+                </Button>
+                <Button href="/diagnostic-en-ligne" variant="outline" onClick={() => setMobileOpen(false)}>
+                  Demander un diagnostic
                 </Button>
               </div>
             </div>
