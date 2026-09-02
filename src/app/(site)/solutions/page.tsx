@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { LayersIllustration } from "@/components/site/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { solutions } from "@/lib/data/solutions";
 
@@ -18,6 +19,7 @@ export default function SolutionsPage() {
         eyebrow="Solutions"
         title="Une solution dédiée à chaque domaine opérationnel"
         description="Chaque solution CDF cible un domaine précis de votre entreprise, avec ses propres risques, contrôles et indicateurs de suivi."
+        illustration={<LayersIllustration />}
       />
       <section className="container-cdf py-16">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

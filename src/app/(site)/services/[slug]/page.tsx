@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle2, Users } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { RadarRingsIllustration } from "@/components/site/illustrations";
 import { Button } from "@/components/ui/button";
 import { services, getServiceBySlug } from "@/lib/data/services";
 
@@ -27,7 +28,12 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <PageHero eyebrow={service.tagline} title={service.name} description={service.summary} />
+      <PageHero
+        eyebrow={service.tagline}
+        title={service.name}
+        description={service.summary}
+        illustration={<RadarRingsIllustration icon={service.icon} />}
+      />
 
       <section className="container-cdf grid gap-12 py-16 lg:grid-cols-3">
         <div className="lg:col-span-2">

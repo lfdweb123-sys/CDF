@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { RadarRingsIllustration } from "@/components/site/illustrations";
 import { ContactForm } from "@/components/site/contact-form";
 import { getContact } from "@/lib/content";
 
@@ -13,7 +14,12 @@ export default async function ContactPage() {
   const contact = await getContact();
   return (
     <>
-      <PageHero eyebrow="Contact" title="Parler à un consultant CDF" description="Nous répondons généralement sous 24 heures ouvrées." />
+      <PageHero
+        eyebrow="Contact"
+        title="Parler à un consultant CDF"
+        description="Nous répondons généralement sous 24 heures ouvrées."
+        illustration={<RadarRingsIllustration icon={MessageCircle} />}
+      />
       <section className="container-cdf grid gap-12 py-16 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-1">
           <ContactItem icon={Phone} label="Téléphone" value={contact.phone} href={`tel:${contact.phone.replace(/\s/g, "")}`} />

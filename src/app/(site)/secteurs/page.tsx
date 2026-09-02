@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { NetworkNodesIllustration } from "@/components/site/illustrations";
 import { sectors } from "@/lib/data/sectors";
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function SectorsPage() {
         eyebrow="Secteurs"
         title="Des solutions adaptées à la réalité de votre secteur"
         description="Chaque secteur présente ses propres zones de risque. Voici comment CDF adapte son approche."
+        illustration={<NetworkNodesIllustration />}
       />
       <section className="container-cdf py-16">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

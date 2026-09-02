@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClipboardCheck, Radar, ShieldCheck, Eye, Target, Users } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { NetworkNodesIllustration } from "@/components/site/illustrations";
 import { SectionHeading } from "@/components/ui/card";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function AboutPage() {
         eyebrow="À propos de CDF"
         title="Un cabinet de contrôle opérationnel, pas une police privée"
         description="CDF accompagne les dirigeants dans la structuration de leurs processus de contrôle interne — avec méthode, discrétion et rigueur professionnelle."
+        illustration={<NetworkNodesIllustration />}
       />
 
       <section className="container-cdf py-16">

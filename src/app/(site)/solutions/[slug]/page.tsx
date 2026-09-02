@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, AlertTriangle, ClipboardList, LineChart, PackageCheck } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { LayersIllustration } from "@/components/site/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { solutions, getSolutionBySlug } from "@/lib/data/solutions";
@@ -28,7 +29,12 @@ export default async function SolutionDetailPage({ params }: { params: Promise<{
 
   return (
     <>
-      <PageHero eyebrow={solution.domain} title={solution.name} description={solution.problem} />
+      <PageHero
+        eyebrow={solution.domain}
+        title={solution.name}
+        description={solution.problem}
+        illustration={<LayersIllustration />}
+      />
 
       <section className="container-cdf grid gap-12 py-16 lg:grid-cols-3">
         <div className="space-y-10 lg:col-span-2">

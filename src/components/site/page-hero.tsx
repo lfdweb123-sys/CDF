@@ -5,15 +5,22 @@ export function PageHero({
   title,
   description,
   className,
+  illustration,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   className?: string;
+  illustration?: React.ReactNode;
 }) {
   return (
-    <section className={cn("border-b border-slate-200 bg-navy-950 py-16 lg:py-20", className)}>
-      <div className="container-cdf">
+    <section className={cn("relative overflow-hidden border-b border-slate-200 bg-navy-950 py-16 lg:py-20", className)}>
+      {illustration && (
+        <div className="pointer-events-none absolute right-[-40px] top-1/2 hidden -translate-y-1/2 opacity-90 lg:block">
+          {illustration}
+        </div>
+      )}
+      <div className="container-cdf relative">
         {eyebrow && (
           <p className="text-xs font-semibold uppercase tracking-widest text-accent-400">{eyebrow}</p>
         )}

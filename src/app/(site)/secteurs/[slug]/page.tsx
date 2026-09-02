@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, AlertTriangle, Wrench, Target } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { NetworkNodesIllustration } from "@/components/site/illustrations";
 import { Button } from "@/components/ui/button";
 import { sectors, getSectorBySlug } from "@/lib/data/sectors";
 import { solutions } from "@/lib/data/solutions";
@@ -30,7 +31,12 @@ export default async function SectorDetailPage({ params }: { params: Promise<{ s
 
   return (
     <>
-      <PageHero eyebrow="Secteur" title={sector.name} description={`Solutions CDF adaptées au secteur ${sector.name.toLowerCase()}.`} />
+      <PageHero
+        eyebrow="Secteur"
+        title={sector.name}
+        description={`Solutions CDF adaptées au secteur ${sector.name.toLowerCase()}.`}
+        illustration={<NetworkNodesIllustration />}
+      />
 
       <section className="container-cdf grid gap-12 py-16 lg:grid-cols-3">
         <div className="space-y-10 lg:col-span-2">

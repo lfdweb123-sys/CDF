@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ClipboardCheck } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { RadarRingsIllustration } from "@/components/site/illustrations";
 import { services } from "@/lib/data/services";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function ServicesPage() {
         eyebrow="Nos services"
         title="Un service pour chaque étape de votre démarche de contrôle"
         description="Du premier diagnostic à la supervision continue, CDF structure son accompagnement autour de six services complémentaires."
+        illustration={<RadarRingsIllustration icon={ClipboardCheck} />}
       />
       <section className="container-cdf py-16">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

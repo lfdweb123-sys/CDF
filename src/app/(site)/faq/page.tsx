@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { HelpCircle } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
+import { RadarRingsIllustration } from "@/components/site/illustrations";
 import { faqItems } from "@/lib/data/faq";
 
 export const metadata: Metadata = {
@@ -10,7 +12,11 @@ export const metadata: Metadata = {
 export default function FaqPage() {
   return (
     <>
-      <PageHero eyebrow="Questions fréquentes" title="Ce que vous devez savoir avant de nous contacter" />
+      <PageHero
+        eyebrow="Questions fréquentes"
+        title="Ce que vous devez savoir avant de nous contacter"
+        illustration={<RadarRingsIllustration icon={HelpCircle} />}
+      />
       <section className="container-cdf py-16">
         <div className="mx-auto max-w-3xl divide-y divide-slate-200 border-y border-slate-200">
           {faqItems.map((item) => (

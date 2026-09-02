@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/site/page-hero";
+import { LayersIllustration } from "@/components/site/illustrations";
 import { Badge } from "@/components/ui/badge";
 import { articles } from "@/lib/data/articles";
 import { formatDate } from "@/lib/utils";
@@ -13,7 +14,11 @@ export const metadata: Metadata = {
 export default function ResourcesPage() {
   return (
     <>
-      <PageHero eyebrow="Ressources" title="Guides et articles pour structurer votre contrôle interne" />
+      <PageHero
+        eyebrow="Ressources"
+        title="Guides et articles pour structurer votre contrôle interne"
+        illustration={<LayersIllustration />}
+      />
       <section className="container-cdf py-16">
         <div className="grid gap-6 lg:grid-cols-2">
           {articles.map((article) => (

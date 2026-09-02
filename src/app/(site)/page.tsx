@@ -12,10 +12,11 @@ import {
   FileCheck,
   CheckCircle2,
   TrendingDown,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/card";
-import { HeroGraphic } from "@/components/site/hero-graphic";
+import { RadarRingsIllustration } from "@/components/site/illustrations";
 import { WhatsAppButton } from "@/components/site/whatsapp-button";
 import { services } from "@/lib/data/services";
 import { lossAreas } from "@/lib/data/pricing";
@@ -81,7 +82,7 @@ export default async function HomePage() {
             </div>
 
             <div className="hidden lg:block">
-              <HeroGraphic />
+              <RadarRingsIllustration icon={ShieldCheck} />
             </div>
           </div>
 
