@@ -53,7 +53,16 @@ function getAdminAuth(): Auth {
 }
 
 function getAdminDb(): Firestore {
-  if (!cachedDb) cachedDb = getFirestore(getAdminApp());
+  if (!cachedDb) {
+    cachedDb = getFirestore(getAdminApp());
+    // Several call sites build Firestore payloads by spreading an object that
+    // may contain an explicit `undefined` (e.g. `companyId: x ?? undefined`
+    // for CDF staff, who have no company). The SDK rejects those by default
+    // ("Cannot use 'undefined' as a Firestore value") — this setting drops
+    // such keys instead of throwing, matching how `undefined` behaves
+    // everywhere else in JS (an absent property).
+    cachedDb.settings({ ignoreUndefinedProperties: true });
+  }
   return cachedDb;
 }
 
