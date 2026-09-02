@@ -147,7 +147,7 @@ export function SiteHeader() {
               <nav className="flex-1 px-3 py-4">
                 {mainNav.map((item) => {
                   const active = pathname === item.href || pathname.startsWith(item.href + "/");
-                  const expanded = item.children ? mobileExpanded === item.href || (mobileExpanded === null && active) : false;
+                  const expanded = mobileExpanded === item.href;
                   return (
                     <div key={item.href} className="mb-1">
                       <div
