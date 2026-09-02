@@ -8,6 +8,7 @@ import { canManagePlatform, canManageMissions, isCdfStaff } from "@/lib/auth/rol
 import { logAudit } from "@/lib/audit";
 import { sendTransactionalEmail, baseEmailTemplate } from "@/lib/email/brevo";
 import { generateMissionReference } from "@/lib/utils";
+import { siteConfig } from "@/lib/data/site";
 import type { Role } from "@/types";
 
 async function requireStaff(): Promise<SessionUser> {
@@ -140,7 +141,7 @@ export async function createClientUser(formData: FormData): Promise<void> {
   });
 
   const resetLink = await adminAuth.generatePasswordResetLink(email, {
-    url: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/connexion`,
+    url: `${siteConfig.url}/connexion`,
   });
 
   await sendTransactionalEmail({
@@ -194,7 +195,7 @@ export async function createStaffUser(formData: FormData): Promise<void> {
   });
 
   const resetLink = await adminAuth.generatePasswordResetLink(email, {
-    url: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/connexion`,
+    url: `${siteConfig.url}/connexion`,
   });
 
   await sendTransactionalEmail({

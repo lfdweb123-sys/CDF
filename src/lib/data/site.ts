@@ -1,10 +1,30 @@
+const FALLBACK_URL = "https://cdf-controle.com";
+
+// NEXT_PUBLIC_APP_URL can be unset, empty, or left as an un-replaced
+// placeholder (e.g. copy-pasted from docs) in a given deployment's env vars —
+// never let a bad value there crash the build via `new URL(siteConfig.url)`
+// in the root layout's metadata. Vercel also exposes VERCEL_URL (host only,
+// no scheme) for preview/production deployments as a same-build fallback.
+function resolveAppUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_APP_URL;
+  if (configured) {
+    try {
+      return new URL(configured).toString().replace(/\/$/, "");
+    } catch {
+      console.warn(`[site] Ignoring invalid NEXT_PUBLIC_APP_URL: "${configured}"`);
+    }
+  }
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return FALLBACK_URL;
+}
+
 export const siteConfig = {
   name: "CDF",
   fullName: "CDF — Cabinet de Contrôle Opérationnel & Prévention des Pertes",
   tagline: "Vous ne pouvez pas être partout. Nous vérifions pour vous.",
   description:
     "CDF aide les dirigeants à identifier les failles de leurs opérations, réduire leurs pertes et sécuriser leurs processus.",
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "https://cdf-controle.com",
+  url: resolveAppUrl(),
   contact: {
     phone: "+229 00 00 00 00",
     whatsapp: "+229 00 00 00 00",

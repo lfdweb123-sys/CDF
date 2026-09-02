@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { adminAuth } from "@/lib/firebase/admin";
 import { sendTransactionalEmail, baseEmailTemplate } from "@/lib/email/brevo";
+import { siteConfig } from "@/lib/data/site";
 
 const schema = z.object({ email: z.string().email() });
 
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
 
   try {
     const link = await adminAuth.generatePasswordResetLink(parsed.data.email, {
-      url: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/connexion`,
+      url: `${siteConfig.url}/connexion`,
     });
 
     await sendTransactionalEmail({
