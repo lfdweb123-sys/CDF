@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CDF — Plateforme de Contrôle Opérationnel & Prévention des Pertes
 
-## Getting Started
+> « Vous ne pouvez pas être partout. Nous vérifions pour vous. »
 
-First, run the development server:
+Plateforme B2B pour CDF (Cabinet de Contrôle Opérationnel & Prévention des Pertes) :
+site public, espace client sécurisé, back-office CDF, gestion multi-tenant des
+missions, anomalies, recommandations, rapports et documents.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Stack technique
+
+- **Frontend / Backend** : Next.js 16 (App Router, React Server Components, Server Actions), TypeScript, Tailwind CSS v4
+- **Base de données** : Firestore (multi-tenant, isolation stricte par `companyId`)
+- **Authentification** : Firebase Authentication (email/mot de passe) + cookie de session httpOnly vérifié côté serveur (Firebase Admin SDK)
+- **Stockage** : Firebase Storage (documents, rapports)
+- **Email transactionnel** : Brevo (API HTTP)
+- **Icônes** : lucide-react (aucun émoji dans l'interface)
+- **Déploiement cible** : Vercel
+
+## Architecture
+
+```
+src/
+  app/
+    (site)/       Site public (accueil, services, solutions, secteurs, diagnostic en ligne, etc.)
+    (auth)/        Connexion, mot de passe oublié
+    portail/       Espace client (dashboard, anomalies, recommandations, plan d'action, rapports, documents, contrôles...)
+    admin/         Back-office CDF (clients, missions, anomalies, contrôleurs, audit, CMS léger...)
+    api/           Route Handlers (formulaires publics, sessions, uploads, notifications)
+    sitemap.ts, robots.ts
+  components/
+    ui/            Primitives (Button, Card, Badge, Table, Form...)
+    site/          Header, footer, formulaires publics
+    dashboard/     Shell (sidebar + mobile nav), widgets client/admin
+    auth/          Formulaires de connexion
+  lib/
+    firebase/      Client SDK (browser) + Admin SDK (serveur, lazy-initialisé)
+    auth/          RBAC (rôles/permissions), session serveur
+    actions/       Server Actions du back-office (écritures, toutes basées sur le rôle vérifié côté serveur)
+    data/          Contenu structuré (services, solutions, secteurs, FAQ, navigation)
+    email/         Abstraction Brevo
+    queries.ts      Lecture Firestore (tenant-scoped)
+  types/           Types de domaine partagés
+scripts/
+  seed-demo.ts     Jeu de données de démonstration ("Restaurant Horizon")
+firestore.rules, storage.rules, firebase.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Multi-tenant & sécurité
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Chaque entreprise cliente est un tenant identifié par `companyId`. Toutes les
+  requêtes serveur (Server Components, Server Actions, Route Handlers) sont
+  filtrées par le `companyId` de la session **vérifiée côté serveur** — jamais
+  par une valeur envoyée par le client.
+- L'authentification utilise un cookie de session httpOnly (`cdf_session`),
+  créé par `/api/auth/session` à partir d'un ID token Firebase, puis vérifié
+  côté serveur (`src/lib/auth/session.ts`) sur chaque page protégée.
+- Les rôles (`SUPER_ADMIN_CDF`, `ADMIN_CDF`, `CONSULTANT_CDF`,
+  `CONTROLEUR_TERRAIN`, `CLIENT_ADMIN`, `CLIENT_MANAGER`, `CLIENT_VIEWER`)
+  sont stockés en Custom Claims Firebase (source de vérité pour les
+  autorisations) et mirorés dans Firestore (`users/{uid}`) pour l'affichage.
+- `firestore.rules` et `storage.rules` appliquent une isolation par tenant en
+  seconde ligne de défense (voir les commentaires dans ces fichiers pour le
+  détail du modèle de menace).
+- Le journal d'audit (`audit_logs`) est en écriture seule via le SDK Admin —
+  aucune interface, y compris administrateur, ne permet de le modifier ou de
+  le supprimer.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Ce qui est réellement implémenté (MVP — Phase 1)
 
-## Learn More
+Site public complet, diagnostic en ligne (CDF Risk Score™ calculé
+serveur-side), demande de mission, espace client (dashboard, anomalies,
+recommandations, plan d'action, contrôles, rapports, coffre documentaire,
+notifications, paramètres/2FA), back-office CDF complet (clients, utilisateurs,
+missions, anomalies, recommandations, contrôles, rapports, documents, équipe,
+tarifs, contenu, journal d'audit), RBAC, multi-tenancy, emails transactionnels
+Brevo.
 
-To learn more about Next.js, take a look at the following resources:
+### Ce qui est délibérément en phase 2 / 3 (roadmap, non simulé)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Messagerie CDF ↔ client, calendrier partagé, facturation/paiements Mobile
+Money, application mobile contrôleur terrain, scoring assisté par IA. Ces
+pages existent déjà dans la navigation avec un état vide clairement identifié
+« Disponible en phase 2 » plutôt que des données fictives présentées comme
+réelles.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Démarrage local
 
-## Deploy on Vercel
+```bash
+npm install
+cp .env.example .env.local   # puis renseigner les valeurs (voir ci-dessous)
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Variables d'environnement
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Voir `.env.example`. Les valeurs Firebase (client + Admin SDK) et la clé
+Brevo vous ont été communiquées séparément (jamais commitées dans ce dépôt) —
+à reporter dans `.env.local` en local, et dans **Project Settings → Environment
+Variables** sur Vercel pour la production.
+
+## Déployer les règles de sécurité Firebase
+
+```bash
+npm install -g firebase-tools
+firebase login
+firebase deploy --only firestore:rules,storage:rules --project <votre-project-id>
+```
+
+## Données de démonstration
+
+```bash
+npm run seed:demo
+```
+
+Crée/actualise l'entreprise fictive « Restaurant Horizon » (Risk Score 62,
+5 anomalies dont 2 critiques, 14 contrôles, ~68 % de plan d'action terminé)
+avec un compte `CLIENT_ADMIN` de démonstration, pour présenter la plateforme
+à des prospects sans exposer de données réelles.
+
+## Créer le tout premier administrateur CDF
+
+La création d'utilisateurs se fait depuis le back-office (`/admin/controleurs`
+pour l'équipe CDF, `/admin/clients/[id]` pour les utilisateurs client), ce qui
+suppose qu'un premier compte `SUPER_ADMIN_CDF` existe déjà. Pour l'amorcer,
+exécutez une fois, avec vos identifiants Admin SDK :
+
+```ts
+// scripts/bootstrap-admin.ts (à adapter avec votre email)
+import { getAuth } from "firebase-admin/auth";
+// ... initialiser l'app Admin comme dans scripts/seed-demo.ts ...
+const user = await getAuth(app).createUser({ email: "vous@cdf-controle.com", displayName: "Votre nom" });
+await getAuth(app).setCustomUserClaims(user.uid, { role: "SUPER_ADMIN_CDF", companyId: null });
+```
+
+puis créez le document Firestore `users/{uid}` correspondant (mêmes champs
+que dans `scripts/seed-demo.ts`).
+
+## Déploiement (Vercel)
+
+1. Connecter ce dépôt à un projet Vercel.
+2. Renseigner les variables d'environnement (voir `.env.example`).
+3. Déployer — `next build` est utilisé tel quel, aucune configuration
+   supplémentaire n'est nécessaire.
+
+## Licence
+
+Propriétaire — CDF.

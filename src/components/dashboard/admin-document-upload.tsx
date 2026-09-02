@@ -6,7 +6,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Upload, Loader2 } from "lucide-react";
 import { storage } from "@/lib/firebase/client";
 import { Select } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import type { Company, DocumentCategory } from "@/types";
 
 const CATEGORY_LABEL: Record<DocumentCategory, string> = {

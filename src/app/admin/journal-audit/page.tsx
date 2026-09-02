@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { listAuditLogs } from "@/lib/queries";
 import { Table, Thead, Th, Tr, Td, EmptyState } from "@/components/ui/table";
-import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Journal d'audit" };
 

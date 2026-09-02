@@ -1,0 +1,65 @@
+rules_version = '2';
+
+// -----------------------------------------------------------------------------
+// CDF Storage security rules
+//
+// Unlike Firestore, file uploads (documents, reports) DO go through the
+// client-side Storage SDK directly from the browser (see
+// src/components/dashboard/document-upload.tsx and admin-*-upload.tsx), so
+// these rules are the real, primary enforcement boundary for who can write
+// into a given company's storage tree — not just defense in depth.
+//
+// Caveat (documented, not a bug): a Firebase Storage download URL obtained
+// via getDownloadURL() embeds a bearer token that grants read access to that
+// specific object regardless of these rules, for as long as the token is not
+// revoked. This app never exposes such a URL to a browser unless that user
+// was already authorized to see the underlying Firestore document (e.g. a
+// confidential report's fileUrl is simply never sent to a CLIENT_VIEWER —
+// see src/app/portail/rapports/page.tsx). The `allow read` rules below still
+// stop direct, unauthorized access attempts against the storage path itself.
+// -----------------------------------------------------------------------------
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function role() {
+      return request.auth.token.role;
+    }
+
+    function isCdfMissionStaff() {
+      return isSignedIn() && role() in ['SUPER_ADMIN_CDF', 'ADMIN_CDF', 'CONSULTANT_CDF', 'CONTROLEUR_TERRAIN'];
+    }
+
+    function belongsToCompany(companyId) {
+      return isSignedIn() && role() in ['CLIENT_ADMIN', 'CLIENT_MANAGER', 'CLIENT_VIEWER']
+        && request.auth.token.companyId == companyId;
+    }
+
+    function canUploadForCompany(companyId) {
+      return isCdfMissionStaff() || (belongsToCompany(companyId) && role() in ['CLIENT_ADMIN', 'CLIENT_MANAGER']);
+    }
+
+    function isUnder20MB() {
+      return request.resource.size < 20 * 1024 * 1024;
+    }
+
+    match /companies/{companyId}/documents/{category}/{fileName} {
+      allow read: if isCdfMissionStaff() || belongsToCompany(companyId);
+      allow write: if canUploadForCompany(companyId) && isUnder20MB();
+    }
+
+    match /companies/{companyId}/reports/{fileName} {
+      allow read: if isCdfMissionStaff() || belongsToCompany(companyId);
+      allow write: if isCdfMissionStaff() && isUnder20MB()
+        && request.resource.contentType == 'application/pdf';
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

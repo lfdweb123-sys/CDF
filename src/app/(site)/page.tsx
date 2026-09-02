@@ -18,6 +18,18 @@ import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/card";
 import { services } from "@/lib/data/services";
 import { lossAreas } from "@/lib/data/pricing";
+import { siteConfig } from "@/lib/data/site";
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: siteConfig.fullName,
+  alternateName: "CDF",
+  url: siteConfig.url,
+  description: siteConfig.description,
+  areaServed: "BJ",
+  slogan: siteConfig.tagline,
+};
 
 const domainIcons = [Wallet, Package, ShoppingCart, Users, FolderKanban, Truck, Fuel, Smartphone, FileCheck];
 const domainLabels = ["Caisse", "Stocks", "Achats", "Personnel", "Projets", "Logistique", "Carburant", "Encaissements", "Procédures"];
@@ -25,6 +37,10 @@ const domainLabels = ["Caisse", "Stocks", "Achats", "Personnel", "Projets", "Log
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy-950">
         <div

@@ -1,0 +1,139 @@
+rules_version = '2';
+
+// -----------------------------------------------------------------------------
+// CDF Firestore security rules
+//
+// Architecture note: every read and write performed by this application's own
+// server code (Server Actions, Route Handlers, Server Components) goes through
+// the Firebase ADMIN SDK, which runs with a service account and always bypasses
+// these rules. That is intentional: all tenant-isolation and RBAC checks for
+// the app's own code paths are enforced in TypeScript, server-side, against
+// the caller's verified session (see src/lib/auth/session.ts and
+// src/lib/auth/roles.ts) — never trusting a client-supplied companyId.
+//
+// These rules exist as a second, independent layer of defense: if a browser
+// ever talks to Firestore directly with the CLIENT SDK and a user's ID token
+// (which this app currently does not do — the client SDK is only used here
+// for Firebase Auth and Storage uploads), the same tenant isolation and role
+// checks still apply. Default posture is deny-by-default.
+// -----------------------------------------------------------------------------
+
+function isSignedIn() {
+  return request.auth != null;
+}
+
+function role() {
+  return request.auth.token.role;
+}
+
+function tokenCompanyId() {
+  return request.auth.token.companyId;
+}
+
+function isCdfStaff() {
+  return isSignedIn() && role() in ['SUPER_ADMIN_CDF', 'ADMIN_CDF', 'CONSULTANT_CDF', 'CONTROLEUR_TERRAIN'];
+}
+
+function isPlatformAdmin() {
+  return isSignedIn() && role() in ['SUPER_ADMIN_CDF', 'ADMIN_CDF'];
+}
+
+function belongsToCompany(companyId) {
+  return isSignedIn() && role() in ['CLIENT_ADMIN', 'CLIENT_MANAGER', 'CLIENT_VIEWER'] && tokenCompanyId() == companyId;
+}
+
+function canReadCompanyData(companyId) {
+  return isCdfStaff() || belongsToCompany(companyId);
+}
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isCdfStaff());
+      allow write: if false; // user accounts are created/updated exclusively via the Admin SDK
+    }
+
+    match /companies/{companyId} {
+      allow read: if canReadCompanyData(companyId);
+      allow write: if false;
+    }
+
+    match /missions/{missionId} {
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
+    match /anomalies/{anomalyId} {
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
+    match /recommendations/{recommendationId} {
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false; // includes client comments — appended via /api/portail/recommandations/[id]/commentaires
+    }
+
+    match /controls/{controlId} {
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
+    match /reports/{reportId} {
+      // Confidentiality (resource.data.confidential) is enforced at the query
+      // layer server-side (CLIENT_VIEWER never receives confidential report
+      // metadata) — see src/app/portail/rapports/page.tsx.
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
+    match /documents/{documentId} {
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        (resource.data.companyId != null && canReadCompanyData(resource.data.companyId))
+      );
+      allow write: if false;
+    }
+
+    match /prospect_requests/{prospectId} {
+      allow read: if isCdfStaff();
+      allow write: if false; // created by the public /api/mission-request route (Admin SDK)
+    }
+
+    match /diagnostic_submissions/{submissionId} {
+      allow read: if isCdfStaff();
+      allow write: if false;
+    }
+
+    match /contact_messages/{messageId} {
+      allow read: if isCdfStaff();
+      allow write: if false;
+    }
+
+    match /content/{docId} {
+      allow read: if isCdfStaff();
+      allow write: if false; // edited only via admin Server Actions
+    }
+
+    match /counters/{counterId} {
+      allow read, write: if false;
+    }
+
+    // Append-only, staff-readable, never client-writable — not even for
+    // SUPER_ADMIN_CDF — so the audit trail cannot be quietly edited or
+    // erased from the normal application interface.
+    match /audit_logs/{logId} {
+      allow read: if isPlatformAdmin();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
