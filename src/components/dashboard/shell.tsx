@@ -175,7 +175,9 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
             <Bell className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </header>
-        <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">
+          <div className="mx-auto w-full max-w-6xl">{children}</div>
+        </main>
       </div>
     </div>
   );
