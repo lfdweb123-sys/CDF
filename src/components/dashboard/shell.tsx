@@ -143,8 +143,8 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
   );
 
   return (
-    <div className="flex min-h-screen bg-navy-50">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">{nav}</aside>
+    <div className="flex h-screen overflow-hidden bg-navy-50">
+      <aside className="hidden h-full w-64 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white lg:flex">{nav}</aside>
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -160,8 +160,8 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-8">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-8">
           <button
             type="button"
             className="rounded-md p-2 text-navy-900 lg:hidden"
@@ -175,7 +175,7 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
             <Bell className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </header>
-        <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 lg:px-8 lg:py-8">
           <div className="mx-auto w-full max-w-6xl">{children}</div>
         </main>
       </div>
