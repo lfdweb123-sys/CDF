@@ -28,6 +28,7 @@ export const adminNavItems: DashboardNavItem[] = [
   { label: "Contrôles", href: "/admin/controles", icon: "ClipboardCheck" },
   { label: "Rapports", href: "/admin/rapports", icon: "FileText" },
   { label: "Documents", href: "/admin/documents", icon: "FolderOpen" },
+  { label: "Messagerie", href: "/admin/messagerie", icon: "MessageSquare" },
   { label: "Contrôleurs & équipe", href: "/admin/controleurs", icon: "UserCog" },
   { label: "Abonnements", href: "/admin/abonnements", icon: "CreditCard" },
   { label: "Contenu du site", href: "/admin/contenu", icon: "LayoutList" },

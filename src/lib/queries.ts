@@ -8,6 +8,7 @@ import type {
   Report,
   CdfDocument,
   Mission,
+  Message,
   Notification,
   ProspectRequest,
 } from "@/types";
@@ -33,6 +34,25 @@ export const listReports = (companyId: string) => listByCompany<Report>("reports
 export const listControls = (companyId: string) => listByCompany<Control>("controls", companyId);
 export const listDocuments = (companyId: string) => listByCompany<CdfDocument>("documents", companyId);
 export const listMissions = (companyId: string) => listByCompany<Mission>("missions", companyId);
+export const listMessages = (companyId: string) => listByCompany<Message>("messages", companyId);
+
+/** One row per company with a message thread, most recently active first — used for the admin messaging inbox. */
+export async function listMessageThreads(): Promise<{ companyId: string; companyName: string; lastMessage: Message | null; count: number }[]> {
+  const [messagesSnap, companies] = await Promise.all([adminDb.collection("messages").get(), listCompanies()]);
+  const companyName = new Map(companies.map((c) => [c.id, c.name]));
+  const byCompany = new Map<string, Message[]>();
+  for (const doc of messagesSnap.docs) {
+    const message = { id: doc.id, ...doc.data() } as Message;
+    const list = byCompany.get(message.companyId) ?? [];
+    list.push(message);
+    byCompany.set(message.companyId, list);
+  }
+  const threads = Array.from(byCompany.entries()).map(([companyId, messages]) => {
+    const sorted = [...messages].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    return { companyId, companyName: companyName.get(companyId) ?? "Client inconnu", lastMessage: sorted[0] ?? null, count: messages.length };
+  });
+  return threads.sort((a, b) => ((a.lastMessage?.createdAt ?? "") < (b.lastMessage?.createdAt ?? "") ? 1 : -1));
+}
 
 export async function listAllMissions(): Promise<Mission[]> {
   const snap = await adminDb.collection("missions").orderBy("createdAt", "desc").get();

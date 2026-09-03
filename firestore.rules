@@ -98,6 +98,13 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    match /messages/{messageId} {
+      // Written only via /api/portail/messagerie and /api/admin/messagerie
+      // (Admin SDK), which set authorId/authorRole from the verified session.
+      allow read: if canReadCompanyData(resource.data.companyId);
+      allow write: if false;
+    }
+
     match /notifications/{notificationId} {
       allow read: if isSignedIn() && (
         resource.data.userId == request.auth.uid ||

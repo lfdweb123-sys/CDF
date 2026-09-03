@@ -241,6 +241,26 @@ export interface DiagnosticSubmission {
   createdAt: string;
 }
 
+export interface CalendarEvent {
+  id: string;
+  date: string; // ISO date
+  type: "controle" | "mission" | "echeance";
+  title: string;
+  subtitle: string;
+  status: string;
+  href?: string;
+}
+
+export interface Message {
+  id: string;
+  companyId: string;
+  text: string;
+  authorId: string;
+  authorName: string;
+  authorRole: Role;
+  createdAt: string;
+}
+
 export interface AuditLogEntry {
   id: string;
   actorId: string;

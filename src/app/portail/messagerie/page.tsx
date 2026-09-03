@@ -1,20 +1,27 @@
 import type { Metadata } from "next";
-import { MessageSquare } from "lucide-react";
-import { Phase2Placeholder } from "@/components/dashboard/phase2-placeholder";
+import { getSessionUser } from "@/lib/auth/session";
+import { listMessages } from "@/lib/queries";
+import { MessageThread } from "@/components/dashboard/message-thread";
 
 export const metadata: Metadata = { title: "Messagerie" };
 
-export default function MessagingPage() {
+export default async function MessagingPage() {
+  const session = await getSessionUser();
+  const messages = await listMessages(session!.companyId!);
+  const sorted = [...messages].sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Messagerie</h1>
         <p className="mt-1 text-sm text-slate-500">Échangez directement avec votre consultant CDF.</p>
       </div>
-      <Phase2Placeholder
-        icon={MessageSquare}
-        title="Messagerie sécurisée CDF ↔ Client"
-        description="La messagerie liée à vos missions, anomalies et rapports arrive en phase 2 de la plateforme. En attendant, utilisez la page Contact ou votre consultant habituel."
+      <MessageThread
+        initialMessages={sorted}
+        currentUserId={session!.uid}
+        postUrl="/api/portail/messagerie"
+        emptyLabel="Aucun message pour le moment. Écrivez à votre consultant CDF ci-dessous."
+        placeholder="Écrivez votre message..."
       />
     </div>
   );
