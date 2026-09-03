@@ -4,15 +4,68 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { signOut } from "firebase/auth";
-import { Menu, X, LogOut, Bell } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Bell,
+  LayoutDashboard,
+  AlertTriangle,
+  ListChecks,
+  ClipboardList,
+  ClipboardCheck,
+  FileText,
+  FolderOpen,
+  Calendar,
+  MessageSquare,
+  Settings,
+  Building2,
+  Users,
+  Briefcase,
+  UserCog,
+  CreditCard,
+  LayoutList,
+  History,
+} from "lucide-react";
 import { auth } from "@/lib/firebase/client";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
+// Nav items are defined in src/lib/data/nav.ts and imported by server layouts
+// (src/app/portail/layout.tsx, src/app/admin/layout.tsx), which pass them
+// into this Client Component. A Lucide icon is a forwardRef object, not a
+// plain value — React Server Components refuses to serialize a function
+// reference like that across the server/client boundary ("Functions cannot
+// be passed directly to Client Components"). So nav items carry an icon
+// *name* (a plain string) instead, and this map — which only ever runs
+// client-side — resolves it to the actual component.
+const ICONS = {
+  LayoutDashboard,
+  AlertTriangle,
+  ListChecks,
+  ClipboardList,
+  ClipboardCheck,
+  FileText,
+  FolderOpen,
+  Calendar,
+  MessageSquare,
+  Bell,
+  Settings,
+  Building2,
+  Users,
+  Briefcase,
+  UserCog,
+  CreditCard,
+  LayoutList,
+  History,
+} as const satisfies Record<string, LucideIcon>;
+
+export type DashboardIconName = keyof typeof ICONS;
+
 export interface DashboardNavItem {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: DashboardIconName;
 }
 
 export interface DashboardShellProps {
@@ -50,6 +103,7 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
       <nav className="flex-1 space-y-0.5 px-3">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          const Icon = ICONS[item.icon];
           return (
             <Link
               key={item.href}
@@ -60,7 +114,7 @@ export function DashboardShell({ navItems, brandLabel, brandSublabel, userName, 
                 active ? "bg-navy-900 text-white" : "text-slate-600 hover:bg-navy-50 hover:text-navy-900"
               )}
             >
-              <item.icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
               {item.label}
             </Link>
           );
