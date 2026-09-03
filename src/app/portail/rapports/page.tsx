@@ -26,7 +26,7 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Rapports</h1>
         <p className="mt-1 text-sm text-slate-500">Rapports publiés par CDF pour votre entreprise.</p>
       </div>

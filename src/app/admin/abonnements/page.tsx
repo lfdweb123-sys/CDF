@@ -12,7 +12,7 @@ export default async function AdminSubscriptionsPage() {
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Abonnements CDF</h1>
         <p className="mt-1 text-sm text-slate-500">
           Les libellés tarifaires affichés côté commercial sont administrables ici — aucune modification de code n&apos;est nécessaire.

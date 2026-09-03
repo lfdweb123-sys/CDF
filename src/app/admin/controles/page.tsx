@@ -19,7 +19,7 @@ export default async function AdminControlsPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Contrôles</h1>
         <p className="mt-1 text-sm text-slate-500">Programmation et suivi des contrôles réalisés par les équipes CDF.</p>
       </div>

@@ -12,7 +12,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Paramètres</h1>
         <p className="mt-1 text-sm text-slate-500">Gérez votre profil et la sécurité de votre compte.</p>
       </div>

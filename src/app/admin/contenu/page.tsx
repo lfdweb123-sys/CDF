@@ -14,7 +14,7 @@ export default async function AdminContentPage() {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Contenu du site</h1>
         <p className="mt-1 text-sm text-slate-500">Modifiez les coordonnées affichées sur le site public sans intervention technique.</p>
       </div>

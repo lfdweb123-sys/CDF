@@ -29,7 +29,7 @@ export default async function AdminReportsPage({
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Rapports</h1>
         <p className="mt-1 text-sm text-slate-500">Publiez les rapports de mission pour vos clients.</p>
       </div>

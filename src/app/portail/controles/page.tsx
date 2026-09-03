@@ -17,7 +17,7 @@ export default async function ControlsPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Contrôles</h1>
         <p className="mt-1 text-sm text-slate-500">Contrôles réalisés et programmés par les équipes CDF.</p>
       </div>

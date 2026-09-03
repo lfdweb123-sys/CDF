@@ -9,7 +9,7 @@ export default async function AuditLogPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Journal d&apos;audit</h1>
         <p className="mt-1 text-sm text-slate-500">
           Qui a fait quoi, quand, et sur quelle donnée. Journal en écriture seule — aucune interface

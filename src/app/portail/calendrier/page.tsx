@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Calendrier" };
 export default function CalendarPage() {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Calendrier</h1>
         <p className="mt-1 text-sm text-slate-500">Vue d&apos;ensemble de vos missions, contrôles et échéances.</p>
       </div>

@@ -28,7 +28,7 @@ export default async function DocumentsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="text-center">
         <h1 className="text-2xl font-semibold text-navy-950">Coffre documentaire</h1>
         <p className="mt-1 text-sm text-slate-500">Documents partagés entre votre entreprise et CDF, classés par catégorie.</p>
       </div>

@@ -36,7 +36,7 @@ export default async function ClientDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="text-center">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{company?.name ?? "Votre entreprise"}</p>
         <h1 className="mt-1 text-2xl font-semibold text-navy-950">Tableau de bord</h1>
       </div>
